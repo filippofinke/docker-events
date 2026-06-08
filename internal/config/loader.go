@@ -31,7 +31,7 @@ func Load() (*Config, error) {
 	}
 
 	cfg := &Config{
-		DockerFilters:    parseFilters(os.Getenv("DOCKER_FILTERS")),
+		DockerFilters:    parseFilters(os.Getenv("DOCKER_EVENT_FILTERS")),
 		DockerEventType:  parseEventTypes(os.Getenv("DOCKER_EVENT_TYPE")),
 		NotifySubject:    getEnvOrDefault("NOTIFY_SUBJECT", "Docker Event"),
 		MessageTemplate:  os.Getenv("MESSAGE_TEMPLATE"),

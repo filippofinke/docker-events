@@ -34,3 +34,23 @@ func TestLoadValidation(t *testing.T) {
 		t.Fatalf("expected error when no providers configured")
 	}
 }
+
+func TestLoadDockerEventFilters(t *testing.T) {
+	os.Clearenv()
+	// Set a provider so validation passes
+	os.Setenv("SLACK_BOT_TOKEN", "token")
+	os.Setenv("SLACK_CHANNEL_IDS", "channel")
+
+	expectedFilters := "event=start,type=container"
+	os.Setenv("DOCKER_EVENT_FILTERS", expectedFilters)
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	want := []string{"event=start", "type=container"}
+	if !reflect.DeepEqual(cfg.DockerFilters, want) {
+		t.Errorf("got filters %v, want %v", cfg.DockerFilters, want)
+	}
+}
