@@ -13,7 +13,7 @@ This project uses docker system events and forwards meaningful summaries through
 
 - [x] Real-time streaming of `docker system events` via a managed watcher
 - [x] Human-friendly notifications enriched with context (timestamp, actor attributes, status)
-- [x] Multi-channel delivery (Slack, Telegram, Discord) powered by `github.com/nikoksr/notify`
+- [x] Multi-channel delivery (Slack, Telegram, Discord, Teams) powered by `github.com/nikoksr/notify`
 - [x] Opt-in filtering by Docker event types and CLI filters
 - [x] Environment variable driven configuration with validation at startup
 - [x] Composable code structure (config, watcher, notifier) and unit tests for formatting helpers
@@ -24,7 +24,7 @@ Prerequisites
 
 - Go 1.24+
 - Docker CLI with access to the target daemon
-- At least one notifications provider configured (Slack bot token + channel IDs, Telegram bot token + chat IDs, Discord bot token + channel IDs, or Discord webhook URLs)
+- At least one notifications provider configured (Slack bot token + channel IDs, Telegram bot token + chat IDs, Discord bot token + channel IDs, Discord webhook URLs, or Microsoft Teams webhook URLs)
 
 Clone & install dependencies
 
@@ -64,6 +64,7 @@ All settings are provided via environment variables (see `.env.example`). Key op
 - `DISCORD_BOT_TOKEN`: Discord bot token generated from the Developer Portal.
 - `DISCORD_CHANNEL_IDS`: Comma-separated list of Discord channel IDs to notify.
 - `DISCORD_WEBHOOK_URLS`: Comma-separated list of Discord webhook URLs (recommended over bot tokens for simple notifications).
+- `TEAMS_WEBHOOK_URLS`: Comma-separated list of Microsoft Teams webhook URLs (uses Adaptive Cards).
 - `NOTIFY_SUBJECT_PREFIX`: Prefix for notification subjects (defaults to `Docker event`).
 - `MESSAGE_TEMPLATE`: Custom message template using Go template syntax (see [Message Customization](#message-customization) below).
 - `MESSAGE_LOG_LINES`: Number of container log lines to fetch for events (defaults to 0, disabled).
@@ -309,6 +310,19 @@ DISCORD_WEBHOOK_URLS=https://discord.com/api/webhooks/123456789/your-webhook-tok
 Bot tokens can be used if you need more advanced features or already have a bot infrastructure. Configure with `DISCORD_BOT_TOKEN` and `DISCORD_CHANNEL_IDS`.
 
 You can also use both webhooks and bot tokens simultaneously if needed.
+
+## Microsoft Teams Webhooks
+
+Microsoft Teams supports incoming webhooks that can receive notifications. This project sends notifications to Teams using **Adaptive Cards** (version 1.4).
+
+To create a Teams webhook (using Workflows / Power Automate):
+1. In Microsoft Teams, go to the channel where you want to add the webhook and select **Workflows** (or **Integrations**).
+2. Search for **Post to a channel when a webhook request is received** and select it.
+3. Choose the team and channel, then add the workflow.
+4. Copy the generated webhook URL and add it to `TEAMS_WEBHOOK_URLS` in your `.env` file:
+   ```bash
+   TEAMS_WEBHOOK_URLS=https://your-tenant.webhook.office.com/webhookb2/your-webhook-token
+   ```
 
 ## Extending Notifications
 

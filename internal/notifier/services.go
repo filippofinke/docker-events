@@ -7,6 +7,7 @@ import (
 
 	"github.com/nikoksr/notify/service/discord"
 	notifyhttp "github.com/nikoksr/notify/service/http"
+	"github.com/nikoksr/notify/service/msteams"
 	"github.com/nikoksr/notify/service/slack"
 	"github.com/nikoksr/notify/service/telegram"
 
@@ -77,5 +78,17 @@ func (n *notifierImpl) addDiscord(cfg config.DiscordConfig) error {
 		return fmt.Errorf("discord enabled but no bot token or webhook URLs configured")
 	}
 
+	return nil
+}
+
+func (n *notifierImpl) addTeams(cfg config.TeamsConfig) error {
+	if len(cfg.WebhookURLs) == 0 {
+		return fmt.Errorf("teams enabled but no webhook URLs configured")
+	}
+
+	service := msteams.New()
+	service.DisableWebhookValidation()
+	service.AddReceivers(cfg.WebhookURLs...)
+	n.client.UseServices(service)
 	return nil
 }

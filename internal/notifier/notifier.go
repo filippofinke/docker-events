@@ -63,6 +63,12 @@ func (n *notifierImpl) Setup(cfg *config.Config) error {
 		}
 	}
 
+	if cfg.Teams.Enabled {
+		if err := n.addTeams(cfg.Teams); err != nil {
+			return fmt.Errorf("setup teams: %w", err)
+		}
+	}
+
 	return nil
 }
 

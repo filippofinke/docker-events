@@ -54,3 +54,22 @@ func TestLoadDockerEventFilters(t *testing.T) {
 		t.Errorf("got filters %v, want %v", cfg.DockerFilters, want)
 	}
 }
+
+func TestLoadTeamsWebhooks(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("TEAMS_WEBHOOK_URLS", "https://teams.webhook.url/1, https://teams.webhook.url/2")
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !cfg.Teams.Enabled {
+		t.Errorf("expected Teams config to be enabled")
+	}
+
+	want := []string{"https://teams.webhook.url/1", "https://teams.webhook.url/2"}
+	if !reflect.DeepEqual(cfg.Teams.WebhookURLs, want) {
+		t.Errorf("got webhook URLs %v, want %v", cfg.Teams.WebhookURLs, want)
+	}
+}

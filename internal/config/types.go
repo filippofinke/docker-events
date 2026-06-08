@@ -15,6 +15,7 @@ type Config struct {
 	Slack            SlackConfig
 	Telegram         TelegramConfig
 	Discord          DiscordConfig
+	Teams            TeamsConfig
 }
 
 type SlackConfig struct {
@@ -36,11 +37,16 @@ type DiscordConfig struct {
 	WebhookURLs []string
 }
 
+type TeamsConfig struct {
+	Enabled     bool
+	WebhookURLs []string
+}
+
 func (c *Config) Validate() error {
 	var missing []string
 
-	if !c.Slack.Enabled && !c.Telegram.Enabled && !c.Discord.Enabled {
-		missing = append(missing, "notification credentials (Slack, Telegram, or Discord)")
+	if !c.Slack.Enabled && !c.Telegram.Enabled && !c.Discord.Enabled && !c.Teams.Enabled {
+		missing = append(missing, "notification credentials (Slack, Telegram, Discord, or Teams)")
 	}
 
 	if len(missing) > 0 {

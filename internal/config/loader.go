@@ -102,6 +102,14 @@ func Load() (*Config, error) {
 		}
 	}
 
+	teamsWebhooks := splitAndTrim(os.Getenv("TEAMS_WEBHOOK_URLS"))
+	if len(teamsWebhooks) > 0 {
+		cfg.Teams = TeamsConfig{
+			Enabled:     true,
+			WebhookURLs: teamsWebhooks,
+		}
+	}
+
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}
